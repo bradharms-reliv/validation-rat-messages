@@ -7,16 +7,15 @@ use Reliv\ValidationRat\Model\ValidationResult;
 /**
  * @author James Jervis - https://github.com/jerv13
  */
-interface GetMessagesValidationResult
+interface GetMessageParams
 {
-    const OPTION_INVALID_MESSAGE = FindCodeMessage::OPTION_INVALID_MESSAGE;
-    const OPTION_MESSAGE_PARAMS = GetMessageParams::OPTION_MESSAGE_PARAMS;
+    const OPTION_MESSAGE_PARAMS = 'message-params';
 
     /**
      * @param ValidationResult $validationResult
      * @param array            $options
      *
-     * @return array ['{code}' => '{message}']
+     * @return array
      */
     public function __invoke(
         ValidationResult $validationResult,

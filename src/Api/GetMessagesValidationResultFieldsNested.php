@@ -4,11 +4,12 @@ namespace Reliv\ValidationRatMessages\Api;
 
 use Reliv\ValidationRat\Model\ValidationResult;
 use Reliv\ValidationRat\Model\ValidationResultFields;
+use Reliv\ValidationRatMessages\Model\Field;
 
 class GetMessagesValidationResultFieldsNested implements GetMessagesValidationResultFields
 {
     const DEFAULT_MESSAGE = 'Value is invalid';
-    const MESSAGES_KEY = 'messages';
+    const KEY_MESSAGES = 'messages';
 
     protected $getMessagesValidationResult;
 
@@ -79,19 +80,19 @@ class GetMessagesValidationResultFieldsNested implements GetMessagesValidationRe
         array $options = []
     ): array {
         if ($validationResult instanceof ValidationResultFields) {
-            $options[static::KEY_FIELD_NAME] = $fieldName;
+            $options[Field::KEY_FIELD_NAME] = $fieldName;
             $subMessages = $this->buildMessagesValidationFields(
                 $validationResult->getFieldResults(),
                 [],
                 $options
             );
 
-            $messages = [$fieldName => [static::MESSAGES_KEY => $subMessages]];
+            $messages = [$fieldName => [static::KEY_MESSAGES => $subMessages]];
 
             return $messages;
         }
 
-        $options[static::KEY_FIELD_NAME] = $fieldName;
+        $options[Field::KEY_FIELD_NAME] = $fieldName;
         $messages[$fieldName] = $this->getMessagesValidationResult->__invoke(
             $validationResult,
             $options

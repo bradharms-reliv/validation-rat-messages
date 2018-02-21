@@ -4,6 +4,7 @@ namespace Reliv\ValidationRatMessages\Api;
 
 use Reliv\ValidationRat\Model\ValidationResult;
 use Reliv\ValidationRat\Model\ValidationResultFields;
+use Reliv\ValidationRatMessages\Model\Field;
 
 /**
  * @author James Jervis - https://github.com/jerv13
@@ -81,7 +82,7 @@ class GetMessagesValidationResultFieldsFlatWithSquareBrackets implements GetMess
         array $options = []
     ): array {
         if ($validationResult instanceof ValidationResultFields) {
-            $options[static::KEY_FIELD_NAME] = $fieldName;
+            $options[Field::KEY_FIELD_NAME] = $fieldName;
             $subMessages = $this->buildMessagesValidationFields(
                 $validationResult->getFieldResults(),
                 [],
@@ -97,7 +98,7 @@ class GetMessagesValidationResultFieldsFlatWithSquareBrackets implements GetMess
             return $messages;
         }
 
-        $options[static::KEY_FIELD_NAME] = $fieldName;
+        $options[Field::KEY_FIELD_NAME] = $fieldName;
         $messages[$fieldName] = $this->getMessagesValidationResult->__invoke(
             $validationResult,
             $options
