@@ -5,7 +5,7 @@ namespace Reliv\ValidationRatMessages;
 use Reliv\ValidationRatMessages\Api\GetMessagesValidationResult;
 use Reliv\ValidationRatMessages\Api\GetMessagesValidationResultBasicFactory;
 use Reliv\ValidationRatMessages\Api\GetMessagesValidationResultFields;
-use Reliv\ValidationRatMessages\Api\GetMessagesValidationResultFieldsBasicFactory;
+use Reliv\ValidationRatMessages\Api\GetMessagesValidationResultFieldsNestedFactory;
 
 /**
  * @author James Jervis - https://github.com/jerv13
@@ -24,7 +24,7 @@ class ModuleConfig
                         'factory' => GetMessagesValidationResultBasicFactory::class
                     ],
                     GetMessagesValidationResultFields::class => [
-                        'factory' => GetMessagesValidationResultFieldsBasicFactory::class
+                        'factory' => GetMessagesValidationResultFieldsNestedFactory::class
                     ],
                 ],
             ],
