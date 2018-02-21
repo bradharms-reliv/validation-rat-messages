@@ -3,28 +3,30 @@
 namespace Reliv\ValidationRatMessages\Api;
 
 use Reliv\ValidationRat\Model\ValidationResult;
-use Reliv\ArrayProperties\Property;
+use Reliv\ValidationRatMessages\Model\Result;
 
 /**
  * @author James Jervis - https://github.com/jerv13
  */
 class GetMessagesValidationResultBasic implements GetMessagesValidationResult
 {
-    const DEFAULT_MESSAGE = 'Value is invalid';
-
-    protected $codeMessages;
-    protected $defaultMessage;
+    protected $findCodeMessage;
+    protected $parseMessageParams;
+    protected $getMessageParams;
 
     /**
-     * @param array  $codeMessages
-     * @param string $defaultMessage
+     * @param FindCodeMessage    $findCodeMessage
+     * @param ParseMessageParams $parseMessageParams
+     * @param GetMessageParams   $getMessageParams
      */
     public function __construct(
-        array $codeMessages,
-        string $defaultMessage = self::DEFAULT_MESSAGE
+        FindCodeMessage $findCodeMessage,
+        ParseMessageParams $parseMessageParams,
+        GetMessageParams $getMessageParams
     ) {
-        $this->codeMessages = $codeMessages;
-        $this->defaultMessage = $defaultMessage;
+        $this->findCodeMessage = $findCodeMessage;
+        $this->parseMessageParams = $parseMessageParams;
+        $this->getMessageParams = $getMessageParams;
     }
 
     /**
@@ -41,126 +43,25 @@ class GetMessagesValidationResultBasic implements GetMessagesValidationResult
 
         // We don not care about validity, only if there is a code
         if (empty($code)) {
-            return [];
+            return [
+                Result::KEY_CODE => null,
+                Result::KEY_MESSAGE => null,
+            ];
         }
 
-        $message = $this->getMessage($code, $options);
+        $message = $this->findCodeMessage->__invoke($code, $options);
 
-        $message = $this->parseMessage(
+        $message = $this->parseMessageParams->__invoke(
             $message,
-            $this->getMessageParams($validationResult, $options)
-        );
-
-        return [
-            GetMessagesValidationResult::KEY_CODE => $code,
-            GetMessagesValidationResult::KEY_MESSAGE => $message,
-        ];
-    }
-
-    /**
-     * @param string $code
-     * @param array  $options
-     *
-     * @return string
-     */
-    protected function getMessage(
-        string $code,
-        array $options
-    ): string {
-        $message = Property::get(
-            $this->codeMessages,
-            $code
-        );
-
-        if (empty($message)) {
-            return $this->defaultMessage;
-        }
-
-        if (is_string($message)) {
-            return $message;
-        }
-
-        if (!is_array($message)) {
-            return $this->defaultMessage;
-        }
-
-        $fieldName = Property::getString(
-            $options,
-            static::KEY_FIELD_NAME
-        );
-
-        if (empty($fieldName)) {
-            // Default message
-            return Property::getString(
-                $message,
-                static::KEY_DEFAULT,
-                $this->defaultMessage
-            );
-        }
-
-        $fieldMessage = Property::getString(
-            $message,
-            $fieldName
-        );
-
-        if (!empty($fieldMessage)) {
-            return $fieldMessage;
-        }
-
-        // Default message
-        return Property::getString(
-            $message,
-            static::KEY_DEFAULT,
-            $this->defaultMessage
-        );
-    }
-
-    /**
-     * @param string $message
-     * @param array  $messageParams
-     *
-     * @return string
-     */
-    protected function parseMessage(
-        string $message,
-        array $messageParams
-    ): string {
-        foreach ($messageParams as $param => $messageParam) {
-            $message = str_replace(
-                '{' . $param . '}',
-                $messageParam,
-                $message
-            );
-        }
-
-        return $message;
-    }
-
-    /**
-     * @param ValidationResult $validationResult
-     * @param array            $options
-     *
-     * @return array|null
-     */
-    protected function getMessageParams(
-        ValidationResult $validationResult,
-        array $options = []
-    ) {
-        $messageParams = Property::getArray(
-            $options,
-            static::OPTION_MESSAGE_PARAMS,
-            []
-        );
-
-        $messageParams = array_merge(
-            $messageParams,
-            Property::getArray(
-                $validationResult->getDetails(),
-                static::OPTION_MESSAGE_PARAMS,
-                []
+            $this->getMessageParams->__invoke(
+                $validationResult,
+                $options
             )
         );
 
-        return $messageParams;
+        return [
+            Result::KEY_CODE => $code,
+            Result::KEY_MESSAGE => $message,
+        ];
     }
 }
