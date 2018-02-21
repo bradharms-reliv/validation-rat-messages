@@ -5,12 +5,10 @@ namespace Reliv\ValidationRatMessages\Api;
 use Reliv\ValidationRat\Model\ValidationResult;
 use Reliv\ValidationRat\Model\ValidationResultFields;
 
-/**
- * @author James Jervis - https://github.com/jerv13
- */
-class GetMessagesValidationResultFieldsBasic implements GetMessagesValidationResultFields
+class GetMessagesValidationResultFieldsNested implements GetMessagesValidationResultFields
 {
     const DEFAULT_MESSAGE = 'Value is invalid';
+    const MESSAGES_KEY = 'messages';
 
     protected $getMessagesValidationResult;
 
@@ -25,7 +23,7 @@ class GetMessagesValidationResultFieldsBasic implements GetMessagesValidationRes
 
     /**
      * @param ValidationResultFields $validationResultFields
-     * @param array                  $options
+     * @param array $options
      *
      * @return  array ['{field-name}' => ['{code}' => '{message}']]
      */
@@ -67,10 +65,10 @@ class GetMessagesValidationResultFieldsBasic implements GetMessagesValidationRes
     }
 
     /**
-     * @param string           $fieldName
+     * @param string $fieldName
      * @param ValidationResult $validationResult
-     * @param array            $messages
-     * @param array            $options
+     * @param array $messages
+     * @param array $options
      *
      * @return array
      */
@@ -88,11 +86,7 @@ class GetMessagesValidationResultFieldsBasic implements GetMessagesValidationRes
                 $options
             );
 
-            $messages = $this->flattenSubMessages(
-                $fieldName,
-                $subMessages,
-                $messages
-            );
+            $messages = [$fieldName => [static::MESSAGES_KEY => $subMessages]];
 
             return $messages;
         }
@@ -104,47 +98,5 @@ class GetMessagesValidationResultFieldsBasic implements GetMessagesValidationRes
         );
 
         return $messages;
-    }
-
-    /**
-     * @param string $fieldName
-     * @param array  $subMessages
-     * @param array  $messages
-     *
-     * @return array
-     */
-    protected function flattenSubMessages(
-        string $fieldName,
-        array $subMessages,
-        array $messages
-    ): array {
-        foreach ($subMessages as $subFieldName => $subFieldMessages) {
-            $fieldNamePath = $this->buildFieldName($fieldName, $subFieldName);
-
-            $messages[$fieldNamePath] = $subFieldMessages;
-        }
-
-        return $messages;
-    }
-
-    /**
-     * @param string $fieldName
-     * @param string $subFieldName
-     *
-     * @return string
-     */
-    protected function buildFieldName(
-        string $fieldName,
-        string $subFieldName
-    ): string {
-        $stripped = trim($subFieldName, ']');
-
-        $parts = explode('[', $stripped);
-
-        foreach ($parts as $part) {
-            $fieldName .= '[' . $part . ']';
-        }
-
-        return $fieldName;
     }
 }

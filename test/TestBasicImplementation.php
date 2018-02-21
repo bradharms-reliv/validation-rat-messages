@@ -8,7 +8,7 @@ use Reliv\ValidationRat\Model\ValidationResultBasic;
 use Reliv\ValidationRat\Model\ValidationResultFieldsBasic;
 use Reliv\ValidationRatMessages\Api\GetMessagesValidationResult;
 use Reliv\ValidationRatMessages\Api\GetMessagesValidationResultBasic;
-use Reliv\ValidationRatMessages\Api\GetMessagesValidationResultFieldsBasic;
+use Reliv\ValidationRatMessages\Api\GetMessagesValidationResultFieldsNested;
 
 /**
  * @author James Jervis - https://github.com/jerv13
@@ -120,7 +120,7 @@ class TestBasicImplementation
             'DEFAULT MESSAGE'
         );
 
-        $getMessagesValidationResultFields = new GetMessagesValidationResultFieldsBasic(
+        $getMessagesValidationResultFields = new GetMessagesValidationResultFieldsNested(
             $getMessagesValidationResult
         );
 
