@@ -87,7 +87,7 @@ class GetMessagesValidationResultFieldsNested implements GetMessagesValidationRe
                 $options
             );
 
-            $messages = [$fieldName => [static::KEY_MESSAGES => $subMessages]];
+            $messages[$fieldName] = [static::KEY_MESSAGES => $subMessages];
 
             return $messages;
         }
